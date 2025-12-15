@@ -1,0 +1,27 @@
+{
+  "name": "texxasrulez/rounddav_files",
+  "description": "Roundcube plugin to enable RoundDAV Attachments and provides a File page linked to your Files page.",
+  "type": "roundcube-plugin",
+    "homepage": "https://github.com/texxasrulez/rounddav_files",
+	"support": {
+		"issues": "https://github.com/texxasrulez/rounddav_files/issues",
+		"source": "https://github.com/texxasrulez/rounddav_files"
+  },
+  "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Gene Hawkins",
+            "email": "texxasrulez@yahoo.com",
+            "role": "Lead"
+        }
+    ],
+  "require": {
+    "php": ">=7.4",
+    "texxasrulez/rounddav_provision": ">=0.0.1"
+  },
+  "extra": {
+    "roundcube": {
+      "min-version": "1.5"
+    }
+  }
+}

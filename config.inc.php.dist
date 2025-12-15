@@ -1,0 +1,35 @@
+<?php
+
+// URL to RoundDAV Files UI.
+// %u is replaced with the Roundcube username (e.g. admin@domain.com).
+// You can also add other query parameters if you want later.
+$config['rounddav_files_url'] = 'https://www.domain.com/rounddav/public/files/index.php?user=%u';
+
+// URL used when attaching a file. Supports %u for username and optional %f for file query.
+$config['rounddav_attach_files_url'] = 'https://www.domain.com/rounddav/public/files/rc_attach.php?user=%u';
+
+// Local filesystem paths to the RoundDAV storage (optional, but faster than HTTP download).
+// %u is replaced with the Roundcube username. Shared root is used when area=shared.
+$config['rounddav_files_fs_root'] = '/srv/rounddav-files/users/%u';
+$config['rounddav_files_shared_fs_root'] = '/srv/rounddav-files/shared';
+
+// Reserved for future SSO work (e.g. an HMAC secret for ticket-based login).
+// Not used yet, but the scaffold is here so we don't change config schema later.
+$config['rounddav_files_sso_secret'] = '';
+$config['rounddav_files_sso_enabled'] = false;
+
+// Admin settings (for embedding RoundDAV Admin in Roundcube Settings later).
+// You can use user IDs or usernames – we’ll decide when we wire this up.
+$config['rounddav_files_admin_users'] = [
+    // Example: 'admin@domain.com',
+];
+
+// URL to RoundDAV Admin UI (can use %u)
+$config['rounddav_admin_url'] = 'https://www.domain.com/rounddav/public/admin/index.php?user=%u';
+
+// Who can see the RoundDAV Admin panel in Settings.
+// Accepts usernames or numeric user IDs.
+$config['rounddav_files_admin_users'] = [
+    'gene@domain.com',
+    // '1', // you can also use '1' if your RC user id is 1
+];

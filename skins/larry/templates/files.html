@@ -1,0 +1,21 @@
+<roundcube:include file="includes/layout.html" />
+<roundcube:include file="includes/menu.html" />
+
+<roundcube:include file="/includes/links.html" />
+<roundcube:include file="/includes/taskbar.html" />
+<roundcube:include file="/includes/header.html" />
+
+<h1 class="voice"><roundcube:label name="rounddav_files.files" /></h1>
+
+<div id="layout-content" class="selected" role="main">
+    <div class="iframe-wrapper">
+        <roundcube:object
+            name="rounddav_files_frame"
+            id="rounddav-files-frame"
+            src="env:blankpage"
+            title="arialabelrounddavfilescontent"
+        />
+    </div>
+</div>
+
+<roundcube:include file="includes/footer.html" />

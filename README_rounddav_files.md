@@ -1,21 +1,7 @@
 # rounddav_files
-
-[![Packagist Downloads](https://img.shields.io/packagist/dt/texxasrulez/rounddav_files?style=plastic&logo=packagist&logoColor=white&label=Downloads&labelColor=blue&color=gold)](https://packagist.org/packages/texxasrulez/rounddav_files)
-[![Packagist Version](https://img.shields.io/packagist/v/texxasrulez/rounddav_files?style=plastic&logo=packagist&logoColor=white&label=Version&labelColor=blue&color=limegreen)](https://packagist.org/packages/texxasrulez/rounddav_files)
-[![Github License](https://img.shields.io/github/license/texxasrulez/rounddav_files?style=plastic&logo=github&label=License&labelColor=blue&color=coral)](https://github.com/texxasrulez/rounddav_files/LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/texxasrulez/rounddav_files?style=plastic&logo=github&label=Stars&labelColor=blue&color=deepskyblue)](https://github.com/texxasrulez/rounddav_files/stargazers)
-[![GitHub Issues](https://img.shields.io/github/issues/texxasrulez/rounddav_files?style=plastic&logo=github&label=Issues&labelColor=blue&color=aqua)](https://github.com/texxasrulez/rounddav_files/issues)
-[![GitHub Contributors](https://img.shields.io/github/contributors/texxasrulez/rounddav_files?style=plastic&logo=github&logoColor=white&label=Contributors&labelColor=blue&color=orchid)](https://github.com/texxasrulez/rounddav_files/graphs/contributors)
-[![GitHub Forks](https://img.shields.io/github/forks/texxasrulez/rounddav_files?style=plastic&logo=github&logoColor=white&label=Forks&labelColor=blue&color=darkorange)](https://github.com/texxasrulez/rounddav_files/forks)
-[![Donate Paypal](https://img.shields.io/badge/Paypal-Money_Please!-blue.svg?style=plastic&labelColor=blue&color=forestgreen&logo=paypal)](https://www.paypal.me/texxasrulez)
-
 WebDAV Files integration for Roundcube, powered by RoundDAV.
 
 This plugin adds a **Files** tab to Roundcube and lets users attach files directly from their RoundDAV storage into email messages.
-
-This plugin requires [RoundDAV Server](https://github.com/texxasrulez/rounddav) to function.
-
-Check out the [Suite README](README_suite.md) to see what is entailed.
 
 ---
 

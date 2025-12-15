@@ -1,0 +1,27 @@
+/* RoundDAV Files - Elastic Skin */
+
+#taskmenu a.button-rounddav-files:before {
+    content: "\f0c2"
+}
+
+#rounddav-files-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#rounddav-files-frame {
+	width: 100%;
+	height: 100%;
+	border: 0px;
+}
+
+/* Taskbar button class; hook your own icon here */
+.button-rounddav_files {
+    /* You can set background-image, etc. to reuse your existing cloud icon */
+}

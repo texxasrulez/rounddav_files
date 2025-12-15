@@ -1,0 +1,63 @@
+/* RoundDAV Files - Larry / Classic Skins */
+
+/* Taskbar icon: anchor-level so we don't care about inner markup */
+#taskbar a.button-rounddav-files,
+#taskbar a.button-files {
+  background: url(images/rounddav-files_button.png) 6px center no-repeat;
+  padding-left: 40px; /* leave room for icon */
+}
+
+/* Hover/selected state */
+#taskbar a.button-rounddav-files:hover,
+#taskbar a.button-rounddav-files.button-selected,
+#taskbar a.button-files:hover,
+#taskbar a.button-files.button-selected {
+  background-image: url(images/rounddav-files_button_selected.png);
+}
+
+/* Settings list icon (normal / inactive) */
+#settings-sections li a.rounddav-files {
+    background-image: url("./images/settings_rounddav-files.svg") !important;
+    background-repeat: no-repeat !important;
+    background-position: 8px center !important;
+    background-size: 20px 20px !important;
+    padding-left: 36px; /* ensure text doesn't overlap the icon */
+}
+
+/* Match other taskbar labels (bump to 12px if you want) */
+#taskbar a.button-rounddav-files,
+#taskbar a.button-files {
+  font-size: 12px;
+  line-height: 24px;
+}
+
+/* Main content area for our iframe */
+#rounddav-files-container {
+  height: 100%;
+}
+
+#rounddav-files-frame {
+  border: 0;
+  width: 100%;
+  height: calc(100vh - 80px); /* leave obvious space so RC header is visible */
+}
+
+#rounddav-admin-container {
+  height: 100%;
+}
+
+#rounddav-admin-frame {
+  border: 0;
+  width: 100%;
+  height: calc(100vh - 80px);
+}
+
+/* Center the Attach from RoundDAV inline button */
+#compose-attachments .rounddav-inline-wrapper {
+    text-align: center;
+    margin: 0.5em 0;
+}
+
+#compose-attachments .rounddav-inline-wrapper .button-rounddav-attach-inline {
+    display: inline-block;
+}
