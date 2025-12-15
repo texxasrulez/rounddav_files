@@ -1,5 +1,6 @@
 # rounddav_files
 
+![Downloads](https://img.shields.io/github/downloads/texxasrulez/rounddav_files/total)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/texxasrulez/rounddav_files?style=plastic&logo=packagist&logoColor=white&label=Downloads&labelColor=blue&color=gold)](https://packagist.org/packages/texxasrulez/rounddav_files)
 [![Packagist Version](https://img.shields.io/packagist/v/texxasrulez/rounddav_files?style=plastic&logo=packagist&logoColor=white&label=Version&labelColor=blue&color=limegreen)](https://packagist.org/packages/texxasrulez/rounddav_files)
 [![Github License](https://img.shields.io/github/license/texxasrulez/rounddav_files?style=plastic&logo=github&label=License&labelColor=blue&color=coral)](https://github.com/texxasrulez/rounddav_files/LICENSE)
