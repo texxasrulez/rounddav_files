@@ -1,6 +1,6 @@
 # rounddav_files
 
-![Downloads](https://img.shields.io/github/downloads/texxasrulez/rounddav_files/total)
+![Downloads](https://img.shields.io/github/downloads/texxasrulez/rounddav_files/total?style=plastic&logo=github&logoColor=white&label=Downloads&labelColor=aqua&color=blue)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/texxasrulez/rounddav_files?style=plastic&logo=packagist&logoColor=white&label=Downloads&labelColor=blue&color=gold)](https://packagist.org/packages/texxasrulez/rounddav_files)
 [![Packagist Version](https://img.shields.io/packagist/v/texxasrulez/rounddav_files?style=plastic&logo=packagist&logoColor=white&label=Version&labelColor=blue&color=limegreen)](https://packagist.org/packages/texxasrulez/rounddav_files)
 [![Github License](https://img.shields.io/github/license/texxasrulez/rounddav_files?style=plastic&logo=github&label=License&labelColor=blue&color=coral)](https://github.com/texxasrulez/rounddav_files/LICENSE)
@@ -14,7 +14,17 @@ WebDAV Files integration for Roundcube, powered by RoundDAV.
 
 This plugin adds a **Files** tab to Roundcube and lets users attach files directly from their RoundDAV storage into email messages.
 
-This plugin requires [RoundDAV Server](https://github.com/texxasrulez/rounddav) to function.
+This plugin requires:
+
+[RoundDAV Server](https://github.com/texxasrulez/rounddav) to function.
+
+This plugin requires:
+
+[RoundDAV Provision Roundcube Plugin](https://github.com/texxasrulez/rounddav_provision)
+
+Recommended Additional Plugin:
+
+[RoundDAV Bookmarks Roundcube Plugin](https://github.com/texxasrulez/rounddav_bookmarks)
 
 Check out the [Suite README](README_suite.md) to see what is entailed.
 
