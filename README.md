@@ -45,15 +45,15 @@ Check out the [Suite README](README_suite.md) to see what is entailed.
 -----------
 Users Files:
 
-![Alt text](/images/shared-files.png?raw=true "RoundDAV Provisiion Screenshot")
+![Alt text](/images/shared-files.png?raw=true "RoundDAV Files Screenshot")
 
 Administration Main Dashboard:
 
-![Alt text](/images/admin-files.png?raw=true "RoundDAV Provisiion Screenshot")
+![Alt text](/images/admin-files.png?raw=true "RoundDAV Admin Dashboard Screenshot")
 
 Administration Shares Dashboard:
 
-![Alt text](/images/admin-shares.png?raw=true "RoundDAV Provisiion Screenshot")
+![Alt text](/images/admin-shares.png?raw=true "RoundDAV Admin Shared Dashboard Screenshot")
 ---
 
 ## Installation
