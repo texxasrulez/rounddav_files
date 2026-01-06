@@ -47,10 +47,13 @@ Users Files:
 
 ![Alt text](/images/shared-files.png?raw=true "RoundDAV Provisiion Screenshot")
 
-Administration Panel:
+Administration Main Dashboard:
 
 ![Alt text](/images/admin-files.png?raw=true "RoundDAV Provisiion Screenshot")
 
+Administration Shares Dashboard:
+
+![Alt text](/images/admin-shares.png?raw=true "RoundDAV Provisiion Screenshot")
 ---
 
 ## Installation
