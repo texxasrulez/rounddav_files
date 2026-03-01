@@ -133,6 +133,11 @@ If something goes sideways, check:
 - Roundcube `logs/rounddav` and `logs/roundcube`
 - PHP error logs for RoundDAV
 
+For iframe/embed and security-header troubleshooting, see:
+
+- `rounddav_files/README.md` section: **Embed Troubleshooting and Header Guidance**
+- `rounddav/README_rounddav_admin.md` section: **Config Backup, Restore, and Retention**
+
 ---
 
 ## Why This Suite Exists

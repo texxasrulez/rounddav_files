@@ -77,8 +77,9 @@ $config['plugins'][] = 'rounddav_files';
 // %u will be replaced with the URL-encoded Roundcube username.
 $config['rounddav_files_url'] = 'https://your.server/rounddav/public/files/?user=%u';
 
-// (Optional) Endpoint for attachment operations if you implement them as a RoundDAV API
-$config['rounddav_attach_url'] = 'https://your.server/rounddav/public/api.php?r=attach';
+// (Optional) Endpoint template for attachment fetch operations.
+// Supports %u for username and optional %f for file query payload.
+$config['rounddav_attach_files_url'] = 'https://your.server/rounddav/public/files/rc_attach.php?user=%u';
 ```
 
 ---
@@ -150,6 +151,30 @@ This means:
 
 - First visit after login → automatic SSO via `/sso_login.php`
 - Later visits → direct Files URL (as long as the RoundDAV session is still valid)
+
+---
+
+## Embed Troubleshooting and Header Guidance
+
+If the Files iframe does not load or is blocked by browser policy, check RoundDAV Admin:
+
+```text
+/rounddav/public/admin/?action=config
+```
+
+In **Security diagnostics** and **Security Headers**:
+
+- Keep `security.headers.enabled = true`
+- Keep `security.headers.x_content_type_options = true`
+- Keep `security.headers.referrer_policy = strict-origin-when-cross-origin`
+- For cross-origin Roundcube embedding, keep `security.headers.x_frame_options = ''` (empty)
+- If CSP is enabled, include your Roundcube origin in `frame-ancestors`
+
+Use **Verify Current Headers** to compare expected vs live headers on Admin and Files endpoints.
+
+For backup/restore and retention operations (`Create backup now`, `Restore`, `Download all as ZIP`, retention pruning), see the RoundDAV admin docs:
+
+- [RoundDAV Admin README](../rounddav/README_rounddav_admin.md)
 
 ---
 

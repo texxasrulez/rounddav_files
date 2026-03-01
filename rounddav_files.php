@@ -417,6 +417,63 @@ class rounddav_files extends rcube_plugin
         return $id;
     }
 
+    private function sanitizeRelPath(string $path): string
+    {
+        $path = str_replace(["\\", "\0"], '/', $path);
+        $parts = [];
+
+        foreach (explode('/', $path) as $seg) {
+            $seg = trim($seg);
+            if ($seg === '' || $seg === '.') {
+                continue;
+            }
+            if ($seg === '..') {
+                array_pop($parts);
+                continue;
+            }
+            $parts[] = $seg;
+        }
+
+        return implode('/', $parts);
+    }
+
+    private function sanitizeFilename(string $file): string
+    {
+        $file = str_replace(["\0", '/', '\\'], '', (string) $file);
+        return trim($file);
+    }
+
+    private function resolveExistingPath(string $root, string $rel, string $file): ?string
+    {
+        $baseReal = realpath($root);
+        if ($baseReal === false || !is_dir($baseReal)) {
+            return null;
+        }
+
+        $rel = $this->sanitizeRelPath($rel);
+        $file = $this->sanitizeFilename($file);
+        if ($file === '') {
+            return null;
+        }
+
+        $candidate = rtrim($baseReal, DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . ($rel === '' ? '' : $rel . DIRECTORY_SEPARATOR)
+            . $file;
+
+        $pathReal = realpath($candidate);
+        if ($pathReal === false || !is_file($pathReal)) {
+            return null;
+        }
+
+        $basePrefix = rtrim($baseReal, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        if (strncmp($pathReal, $basePrefix, strlen($basePrefix)) !== 0) {
+            return null;
+        }
+
+        return $pathReal;
+    }
+
     /**
      * Map an href like "?action=download&area=user&path=Pictures&file=me.jpg"
      * to a filesystem path using rounddav_files_fs_root.
@@ -431,7 +488,7 @@ class rounddav_files extends rcube_plugin
         $q = ltrim($href, '?');
         parse_str($q, $params);
 
-        $path = isset($params['path']) ? trim((string) $params['path'], "/") : '';
+        $path = isset($params['path']) ? (string) $params['path'] : '';
         $file = isset($params['file']) ? (string) $params['file'] : '';
         $area = isset($params['area']) ? (string) $params['area'] : 'user';
 
@@ -462,11 +519,19 @@ class rounddav_files extends rcube_plugin
 
         $root = str_replace('%u', $username, $fs_tpl);
 
-        $full = rtrim($root, '/');
-        if ($path !== '') {
-            $full .= '/' . $path;
+        $full = $this->resolveExistingPath($root, $path, $file);
+        if ($full === null) {
+            $this->write_log(
+                'roundcube',
+                sprintf(
+                    'rounddav_files resolve_fs_path_from_href: rejected path for href=%s area=%s root=%s',
+                    $href,
+                    $area,
+                    $root
+                )
+            );
+            return null;
         }
-        $full .= '/' . $file;
 
         $this->write_log(
             'roundcube',
@@ -482,6 +547,61 @@ class rounddav_files extends rcube_plugin
         return $full;
     }
 
+    private function normalize_url_origin(string $url): ?string
+    {
+        $parts = @parse_url($url);
+        if (!is_array($parts) || empty($parts['host']) || empty($parts['scheme'])) {
+            return null;
+        }
+
+        $scheme = strtolower((string) $parts['scheme']);
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return null;
+        }
+
+        $host = strtolower((string) $parts['host']);
+        $port = isset($parts['port']) ? (int) $parts['port'] : null;
+        if ($port === null) {
+            $port = $scheme === 'https' ? 443 : 80;
+        }
+
+        return $scheme . '://' . $host . ':' . $port;
+    }
+
+    private function is_allowed_fetch_url(string $url): bool
+    {
+        if (!preg_match('#^https?://#i', $url)) {
+            return false;
+        }
+
+        $parts = @parse_url($url);
+        if (!is_array($parts) || empty($parts['host'])) {
+            return false;
+        }
+
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        $host = strtolower((string) $parts['host']);
+        $port = isset($parts['port']) ? (int) $parts['port'] : ($scheme === 'https' ? 443 : 80);
+        $origin = $scheme . '://' . $host . ':' . $port;
+        $allowedOrigins = [];
+
+        $filesTpl = (string) $this->rc->config->get('rounddav_files_url', '');
+        $attachTpl = (string) $this->rc->config->get('rounddav_attach_files_url', '');
+
+        foreach ([$filesTpl, $attachTpl] as $tpl) {
+            if ($tpl === '') {
+                continue;
+            }
+
+            $tplOrigin = $this->normalize_url_origin($tpl);
+            if ($tplOrigin !== null) {
+                $allowedOrigins[$tplOrigin] = true;
+            }
+        }
+
+        return isset($allowedOrigins[$origin]);
+    }
+
     private function build_attach_url(string $href): string
     {
         $username   = (string) $this->rc->user->get_username();
@@ -489,8 +609,13 @@ class rounddav_files extends rcube_plugin
         $attach_tpl = (string) $this->rc->config->get('rounddav_attach_files_url', '');
 
         if (preg_match('#^https?://#i', $href)) {
-            $this->write_log('roundcube', 'rounddav_files build_attach_url: absolute href=' . $href);
-            return $href;
+            if ($this->is_allowed_fetch_url($href)) {
+                $this->write_log('roundcube', 'rounddav_files build_attach_url: accepted absolute href=' . $href);
+                return $href;
+            }
+
+            $this->write_log('errors', 'rounddav_files build_attach_url: rejected absolute href=' . $href);
+            return '';
         }
 
         $base = '';
@@ -552,6 +677,11 @@ class rounddav_files extends rcube_plugin
     {
         $content_type_out = null;
 
+        if ($url === '' || !$this->is_allowed_fetch_url($url)) {
+            $this->write_log('errors', 'rounddav_files: rejected fetch URL=' . $url);
+            return null;
+        }
+
         if (!function_exists('curl_init')) {
             $this->write_log('errors', 'rounddav_files: cURL extension missing');
             return null;
@@ -563,17 +693,21 @@ class rounddav_files extends rcube_plugin
             return null;
         }
 
+        $verifySsl = (bool) $this->rc->config->get('rounddav_files_verify_ssl', true);
+        $forwardSessionCookie = (bool) $this->rc->config->get('rounddav_files_forward_session_cookie', false);
         $cookie = session_name() . '=' . session_id();
 
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_HTTPHEADER     => ['Cookie: ' . $cookie],
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_SSL_VERIFYPEER => $verifySsl,
+            CURLOPT_SSL_VERIFYHOST => $verifySsl ? 2 : 0,
             CURLOPT_TIMEOUT        => 20,
             CURLOPT_HEADER         => true,
         ]);
+        if ($forwardSessionCookie) {
+            curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+        }
 
         $response = curl_exec($ch);
 

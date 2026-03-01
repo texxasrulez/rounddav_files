@@ -204,14 +204,28 @@
      */
     function attach_selected_files_from_dialog($dlg) {
         var iframe = document.getElementById('rounddav-files-picker-iframe');
-        if (!iframe || !iframe.contentWindow || !iframe.contentWindow.document) {
+        if (!iframe || !iframe.contentWindow) {
             try {
                 rcmail.display_message('RoundDAV: file list not loaded yet', 'error');
             } catch (e) {}
             return;
         }
 
-        var doc = iframe.contentWindow.document;
+        var doc = null;
+        try {
+            doc = iframe.contentWindow.document;
+        } catch (err) {
+            try {
+                rcmail.display_message('RoundDAV: cannot read picker contents (cross-origin). Use same-origin attach endpoint or direct attach URL.', 'error');
+            } catch (e) {}
+            return;
+        }
+        if (!doc) {
+            try {
+                rcmail.display_message('RoundDAV: file list not loaded yet', 'error');
+            } catch (e) {}
+            return;
+        }
 
         // Be tolerant: support multiple selection styles
         var rows = doc.querySelectorAll(
