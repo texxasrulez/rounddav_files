@@ -1,6 +1,10 @@
 <?php
 
 // URL to RoundDAV Files UI.
+
+// Enable plugin logging (false by default). Set to true only when troubleshooting.
+$config['rounddav_files_debug'] = false;
+
 // %u is replaced with the Roundcube username (e.g. admin@domain.com).
 // You can also add other query parameters if you want later.
 $config['rounddav_files_url'] = 'https://www.domain.com/rounddav/public/files/index.php?user=%u';

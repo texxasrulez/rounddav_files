@@ -7,11 +7,26 @@ class rounddav_files extends rcube_plugin
     /** @var rcmail */
     private $rc;
 
+    private function is_debug_enabled(): bool
+    {
+        return (bool) $this->rc->config->get('rounddav_files_debug', false);
+    }
+
+    private function write_log(string $channel, string $message): void
+    {
+        if (!$this->is_debug_enabled()) {
+            return;
+        }
+
+        rcube::write_log($channel, $message);
+    }
+
     public function init(): void
     {
         $this->rc = rcmail::get_instance();
+        $this->load_config();
 
-        rcube::write_log(
+        $this->write_log(
             'roundcube',
             sprintf(
                 'rounddav_files init: task=%s action=%s',
@@ -20,7 +35,6 @@ class rounddav_files extends rcube_plugin
             )
         );
 
-        $this->load_config();
         $this->add_texts('localization/', true);
 
         $skin = (string) $this->rc->config->get('skin', 'larry');
@@ -52,7 +66,7 @@ class rounddav_files extends rcube_plugin
 
     public function on_startup(array $args): array
     {
-        rcube::write_log(
+        $this->write_log(
             'roundcube',
             sprintf(
                 'rounddav_files on_startup: task=%s action=%s',
@@ -62,7 +76,7 @@ class rounddav_files extends rcube_plugin
         );
 
         if ($this->rc->task === 'mail' && $this->rc->action === 'plugin.rounddav_files_attach_files') {
-            rcube::write_log(
+            $this->write_log(
                 'roundcube',
                 'rounddav_files on_startup: dispatching attach_files()'
             );
@@ -134,13 +148,13 @@ class rounddav_files extends rcube_plugin
             $url = $sso_url;
             // Clear it so the token is not reused indefinitely
             unset($_SESSION['rounddav_sso_login_url']);
-            rcube::write_log('roundcube', 'rounddav_files: using SSO URL for iframe src: ' . $url);
+            $this->write_log('roundcube', 'rounddav_files: using SSO URL for iframe src: ' . $url);
         } else {
             $url_tpl  = (string) $this->rc->config->get('rounddav_files_url', '');
             $username = (string) $this->rc->user->get_username();
             $url      = str_replace('%u', rawurlencode($username), $url_tpl);
 
-            rcube::write_log('roundcube', 'rounddav_files: using fallback files URL template=' . $url_tpl . ' for user=' . $username);
+            $this->write_log('roundcube', 'rounddav_files: using fallback files URL template=' . $url_tpl . ' for user=' . $username);
 
             if ($url === '') {
                 $url = './?_task=mail';
@@ -162,7 +176,7 @@ class rounddav_files extends rcube_plugin
     {
         $rcmail = $this->rc;
 
-        rcube::write_log(
+        $this->write_log(
             'roundcube',
             'rounddav_files attach_files START; REQUEST=' . json_encode($_REQUEST)
         );
@@ -183,7 +197,7 @@ class rounddav_files extends rcube_plugin
 
         $temp_dir = $rcmail->config->get('temp_dir', sys_get_temp_dir());
         if (!is_dir($temp_dir) || !is_writable($temp_dir)) {
-            rcube::write_log('errors', 'rounddav_files: temp_dir not writable: ' . $temp_dir);
+            $this->write_log('errors', 'rounddav_files: temp_dir not writable: ' . $temp_dir);
             $rcmail->output->show_message($this->gettext('attach_error_temp'), 'error');
             $rcmail->output->send('plugin');
             return;
@@ -209,26 +223,26 @@ class rounddav_files extends rcube_plugin
             $fs_path = $this->resolve_fs_path_from_href($href);
             if ($fs_path !== null) {
                 $used_fs = true;
-                rcube::write_log(
+                $this->write_log(
                     'roundcube',
                     'rounddav_files attach_files: using fs_path=' . $fs_path . ' for href=' . $href
                 );
 
                 if (!is_file($fs_path) || !is_readable($fs_path)) {
-                    rcube::write_log(
+                    $this->write_log(
                         'errors',
                         'rounddav_files: fs_path not readable: ' . $fs_path . ' (falling back to HTTP)'
                     );
                 } else {
                     $tmp_path = tempnam($temp_dir, 'rdv_');
                     if ($tmp_path === false) {
-                        rcube::write_log('errors', 'rounddav_files: tempnam failed in ' . $temp_dir . ' (falling back to HTTP)');
+                        $this->write_log('errors', 'rounddav_files: tempnam failed in ' . $temp_dir . ' (falling back to HTTP)');
                         $tmp_path = null;
                     } else {
                         if (!copy($fs_path, $tmp_path)) {
                             @unlink($tmp_path);
                             $tmp_path = null;
-                            rcube::write_log(
+                            $this->write_log(
                                 'errors',
                                 'rounddav_files: copy failed from ' . $fs_path . ' to tmp (falling back to HTTP)'
                             );
@@ -243,7 +257,7 @@ class rounddav_files extends rcube_plugin
             if ($tmp_path === null) {
                 // 2) Fallback to HTTP fetch via RoundDAV UI / rc_attach.php
                 $download_url = $this->build_attach_url($href);
-                rcube::write_log(
+                $this->write_log(
                     'roundcube',
                     'rounddav_files attach_files: href=' . $href . ' download_url=' . $download_url
                 );
@@ -252,19 +266,19 @@ class rounddav_files extends rcube_plugin
                 $data         = $this->fetch_rounddav_file($download_url, $content_type);
 
                 if ($data === null) {
-                    rcube::write_log('errors', 'rounddav_files: failed to fetch file from ' . $download_url);
+                    $this->write_log('errors', 'rounddav_files: failed to fetch file from ' . $download_url);
                     continue;
                 }
 
                 $tmp_path = tempnam($temp_dir, 'rdv_');
                 if ($tmp_path === false) {
-                    rcube::write_log('errors', 'rounddav_files: tempnam failed in ' . $temp_dir);
+                    $this->write_log('errors', 'rounddav_files: tempnam failed in ' . $temp_dir);
                     continue;
                 }
 
                 if (file_put_contents($tmp_path, $data) === false) {
                     @unlink($tmp_path);
-                    rcube::write_log('errors', 'rounddav_files: file_put_contents failed for ' . $tmp_path);
+                    $this->write_log('errors', 'rounddav_files: file_put_contents failed for ' . $tmp_path);
                     continue;
                 }
 
@@ -274,7 +288,7 @@ class rounddav_files extends rcube_plugin
 
             // At this point we have $tmp_path, $name, $mimetype, $filesize.
             if (!$tmp_path || !is_file($tmp_path)) {
-                rcube::write_log('errors', 'rounddav_files: tmp_path invalid for ' . $name);
+                $this->write_log('errors', 'rounddav_files: tmp_path invalid for ' . $name);
                 continue;
             }
 
@@ -288,7 +302,7 @@ class rounddav_files extends rcube_plugin
             );
 
             if (!$attachment_id) {
-                rcube::write_log(
+                $this->write_log(
                     'errors',
                     'rounddav_files: store_compose_attachment() failed for ' . $name
                 );
@@ -316,7 +330,7 @@ class rounddav_files extends rcube_plugin
             // Roundcube convention: DOM id is "rcmfile<ID>"
             $dom_id = 'rcmfile' . $attachment_id;
 
-            rcube::write_log(
+            $this->write_log(
                 'roundcube',
                 sprintf(
                     'rounddav_files attach_files: sending add2attachment_list dom_id=%s name=%s size=%d mimetype=%s',
@@ -387,7 +401,7 @@ class rounddav_files extends rcube_plugin
             'complete'   => true,
         ];
 
-        rcube::write_log(
+        $this->write_log(
             'roundcube',
             sprintf(
                 'rounddav_files store_compose_attachment: session_key=%s compose_id=%s id=%s path=%s size=%d mimetype=%s',
@@ -422,7 +436,7 @@ class rounddav_files extends rcube_plugin
         $area = isset($params['area']) ? (string) $params['area'] : 'user';
 
         if ($file === '') {
-            rcube::write_log(
+            $this->write_log(
                 'roundcube',
                 'rounddav_files resolve_fs_path_from_href: missing file param in href=' . $href
             );
@@ -434,7 +448,7 @@ class rounddav_files extends rcube_plugin
             if ($fs_tpl_shared !== '') {
                 $fs_tpl = $fs_tpl_shared;
             } else {
-                rcube::write_log(
+                $this->write_log(
                     'roundcube',
                     'rounddav_files resolve_fs_path_from_href: shared area requested but rounddav_files_shared_fs_root not set'
                 );
@@ -454,7 +468,7 @@ class rounddav_files extends rcube_plugin
         }
         $full .= '/' . $file;
 
-        rcube::write_log(
+        $this->write_log(
             'roundcube',
             sprintf(
                 'rounddav_files resolve_fs_path_from_href: href=%s area=%s root=%s full=%s',
@@ -475,7 +489,7 @@ class rounddav_files extends rcube_plugin
         $attach_tpl = (string) $this->rc->config->get('rounddav_attach_files_url', '');
 
         if (preg_match('#^https?://#i', $href)) {
-            rcube::write_log('roundcube', 'rounddav_files build_attach_url: absolute href=' . $href);
+            $this->write_log('roundcube', 'rounddav_files build_attach_url: absolute href=' . $href);
             return $href;
         }
 
@@ -485,7 +499,7 @@ class rounddav_files extends rcube_plugin
             $base = str_replace('%u', rawurlencode($username), $attach_tpl);
             if (strpos($base, '%f') !== false) {
                 $url = str_replace('%f', rawurlencode($href), $base);
-                rcube::write_log(
+                $this->write_log(
                     'roundcube',
                     sprintf(
                         'rounddav_files build_attach_url (attach_tpl+%%f): href=%s base=%s url=%s',
@@ -503,7 +517,7 @@ class rounddav_files extends rcube_plugin
         }
 
         if ($base === '') {
-            rcube::write_log(
+            $this->write_log(
                 'roundcube',
                 'rounddav_files build_attach_url: NO BASE URL, returning raw href=' . $href
             );
@@ -521,7 +535,7 @@ class rounddav_files extends rcube_plugin
             $url = $base . $sep . ltrim($href, '&?');
         }
 
-        rcube::write_log(
+        $this->write_log(
             'roundcube',
             sprintf(
                 'rounddav_files build_attach_url: href=%s base=%s url=%s',
@@ -539,13 +553,13 @@ class rounddav_files extends rcube_plugin
         $content_type_out = null;
 
         if (!function_exists('curl_init')) {
-            rcube::write_log('errors', 'rounddav_files: cURL extension missing');
+            $this->write_log('errors', 'rounddav_files: cURL extension missing');
             return null;
         }
 
         $ch = curl_init($url);
         if (!$ch) {
-            rcube::write_log('errors', 'rounddav_files: curl_init failed for ' . $url);
+            $this->write_log('errors', 'rounddav_files: curl_init failed for ' . $url);
             return null;
         }
 
@@ -564,7 +578,7 @@ class rounddav_files extends rcube_plugin
         $response = curl_exec($ch);
 
         if ($response === false) {
-            rcube::write_log(
+            $this->write_log(
                 'errors',
                 'rounddav_files: curl_exec failed for ' . $url . ' error=' . curl_error($ch)
             );
@@ -585,7 +599,7 @@ class rounddav_files extends rcube_plugin
             $content_type_out = $content_type;
         }
 
-        rcube::write_log(
+        $this->write_log(
             'roundcube',
             sprintf(
                 'rounddav_files fetch_rounddav_file: url=%s code=%d content_type=%s len=%d',
