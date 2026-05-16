@@ -194,3 +194,15 @@ These messages are helpful when debugging SSO behavior.
 Webmail without file storage feels incomplete.
 
 `rounddav_files` is the missing piece that lets Roundcube act like a modern client: email, calendars, contacts, and files, all with one login.
+
+## Versioning
+- `rounddav_files` now keeps its canonical version in `rounddav_files::PLUGIN_VERSION` inside `rounddav_files.php`.
+- `rounddav_files::info()` exposes the plugin metadata array used for self-identification.
+- Development builds should use a `+dev` suffix such as `1.0.0+dev`.
+- Release builds should use a clean tagged version such as `1.0.0`.
+
+For a release bump:
+1. Update `rounddav_files::PLUGIN_VERSION` in `rounddav_files.php` or run `sh scripts/bump-version.sh 1.0.0`.
+2. Update `CHANGELOG.md`.
+3. Create the matching release tag after verification.
+

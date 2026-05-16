@@ -1,7 +1,13 @@
 /* RoundDAV Files - Elastic Skin */
 
-#taskmenu a.button-rounddav-files:before {
-    content: "\f0c2"
+/* Elastic renders task buttons differently across desktop and phone layouts. */
+#taskmenu a.button-rounddav-files:before,
+#taskmenu a.button-files:before,
+#taskmenu a.files:before {
+    content: "\f0c2";
+    font-family: "Icons";
+    font-style: normal;
+    font-weight: 900;
 }
 
 #rounddav-files-container {
@@ -19,6 +25,30 @@
 	width: 100%;
 	height: 100%;
 	border: 0px;
+}
+
+#layout-content.rounddav-files-content {
+    display: flex;
+    flex-direction: column;
+}
+
+#layout-content.rounddav-files-content .iframe-wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+#layout-content.rounddav-files-content > .header {
+    display: none;
+}
+
+html.layout-phone #layout-content.rounddav-files-content > .header {
+    display: flex;
+}
+
+@media screen and (max-width: 480px) {
+    #layout-content.rounddav-files-content > .header {
+        display: flex;
+    }
 }
 
 /* Taskbar button class; hook your own icon here */

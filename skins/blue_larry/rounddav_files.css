@@ -1,17 +1,31 @@
 /* RoundDAV Files - Larry / Classic Skins */
 
-/* Taskbar icon: anchor-level so we don't care about inner markup */
+/* Taskbar icon: draw the icon without replacing the selected anchor background. */
 #taskbar a.button-rounddav-files,
 #taskbar a.button-files {
-  background: url(images/rounddav-files_button.png) 6px center no-repeat;
-  padding-left: 40px; /* leave room for icon */
+  position: relative;
+  padding-left: 40px;
+}
+
+#taskbar a.button-rounddav-files:before,
+#taskbar a.button-files:before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  margin-top: -13px;
+  background-image: url(images/rounddav-files_button.png);
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
 /* Hover/selected state */
-#taskbar a.button-rounddav-files:hover,
-#taskbar a.button-rounddav-files.button-selected,
-#taskbar a.button-files:hover,
-#taskbar a.button-files.button-selected {
+#taskbar a.button-rounddav-files:hover:before,
+#taskbar a.button-rounddav-files.button-selected:before,
+#taskbar a.button-files:hover:before,
+#taskbar a.button-files.button-selected:before {
   background-image: url(images/rounddav-files_button_selected.png);
 }
 

@@ -2,6 +2,20 @@
 
 class rounddav_files extends rcube_plugin
 {
+    const PLUGIN_VERSION = '1.0.0+dev';
+    const PLUGIN_INFO = array(
+        'name' => 'rounddav_files',
+        'vendor' => 'Gene Hawkins',
+        'version' => self::PLUGIN_VERSION,
+        'license' => 'GPL-3.0',
+        'uri' => 'https://github.com/texxasrulez/rounddav_files',
+    );
+
+    public static function info(): array
+    {
+        return self::PLUGIN_INFO;
+    }
+
     public $task = '.*';
 
     /** @var rcmail */
@@ -113,8 +127,8 @@ class rounddav_files extends rcube_plugin
                 'label'    => 'rounddav_files.files',
                 'title'    => 'rounddav_files.files',
                 'domain'   => 'rounddav_files',
-                'class'    => 'button-rounddav-files button-files',
-                'classsel' => 'button-rounddav-files button-files button-selected',
+                'class'    => 'button-rounddav-files button-files files',
+                'classsel' => 'button-rounddav-files button-files files button-selected',
                 'id'       => 'taskbarrounddav_files',
             ],
             'taskbar'

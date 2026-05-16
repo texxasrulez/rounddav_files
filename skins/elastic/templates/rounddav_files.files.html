@@ -3,7 +3,12 @@
 
 <h1 class="voice"><roundcube:label name="rounddav_files.files" /></h1>
 
-<div id="layout-content" class="selected" role="main">
+<div id="layout-content" class="selected rounddav-files-content" role="main">
+	<div class="header">
+		<a class="button icon task-menu-button" href="#menu"><span class="inner"><roundcube:label name="menu" /></span></a>
+		<a class="button icon back-list-button" href="./?_task=mail"><span class="inner"><roundcube:label name="back" /></span></a>
+		<span class="header-title"><roundcube:label name="rounddav_files.files" /></span>
+	</div>
 	<div class="iframe-wrapper">
 		<roundcube:object
          name="rounddav_files_frame"
