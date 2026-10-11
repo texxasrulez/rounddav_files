@@ -117,7 +117,19 @@
 
         davBtn.addEventListener('click', function(e) {
             e.preventDefault();
+
+            // Bypass the unsaved check right before triggering the command
+            rcmail.compose_skip_unsavedcheck = true;
+
+            // Execute command without `Do you want to discard your changes?`
             rcmail.command('plugin.rounddav_files_open', '', this, e);
+
+            // Re-enable the unsaved check right after the command executes,
+            // using a brief setTimeout to ensure cross-browser stability across
+            // Chromium, Firefox, and WebKit rendering layers during the initial DOM focus shift.
+            setTimeout(function() {
+                rcmail.compose_skip_unsavedcheck = false;
+            }, 100);
         });
 
         try {
