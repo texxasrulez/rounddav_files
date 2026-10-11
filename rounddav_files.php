@@ -122,14 +122,15 @@ class rounddav_files extends rcube_plugin
     {
         $this->add_button(
             [
-                'command'  => 'rounddav_files',
-                'type'     => 'link',
-                'label'    => 'rounddav_files.files',
-                'title'    => 'rounddav_files.files',
-                'domain'   => 'rounddav_files',
-                'class'    => 'button-rounddav-files button-files files',
-                'classsel' => 'button-rounddav-files button-files files button-selected',
-                'id'       => 'taskbarrounddav_files',
+                'command'    => 'rounddav_files',
+                'type'       => 'link',
+                'label'      => 'rounddav_files.files',
+                'title'      => 'rounddav_files.files',
+                'domain'     => 'rounddav_files',
+                'class'      => 'button-rounddav-files button-files files',
+                'classsel'   => 'button-rounddav-files button-files files button-selected',
+                'innerclass' => 'button-inner',
+                'id'         => 'taskbarrounddav_files',
             ],
             'taskbar'
         );
